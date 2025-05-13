@@ -1,33 +1,29 @@
 
 import get_data as dg
 import heapq
-class graph:
-
-    INF=0
-
-    
+class Graph:
 
     def __init__(self):
-        source=0
-        INF=1e16
+        self.source=0
+        self.INF=1e16
         #Se crea la lista de nodos
-        list_nodes=[]
+        self.list_nodes=[]
         #Se le asigna un id a cada nodo
-        id={}
+        self.id={}
         #Se crea una lista de adyacencia
-        adj=[]
+        self.adj=[]
         #Se crea un vector para guardar las distancias mínimas
-        dist=[]
+        self.dist=[]
         #Se crea un vector para guardar los caminos
-        path=[]
+        self.path=[]
         #Inicializacion de lista de nodos y id
-        list_nodes=dg.generate_nodes()
-        for i in range(len(list_nodes)):
-            self.id[list_nodes[i]]=i
+        self.list_nodes=dg.generate_nodes()
+        for i in range(len(self.list_nodes)):
+            self.id[self.list_nodes[i]]=i
         #Creación de la lista de adyacencia en base al id
-        adj=[[] for _ in self.id]
+        self.adj=[[] for _ in self.id]
         for a,b,c in dg.generate_edges():
-            adj[a].append((c,b))
+            self.adj[a].append((c,b))
         #Inicialización de los vectores
         self.clean()
 
