@@ -1,9 +1,11 @@
 
 import get_data as dg
 import heapq
+import osmnx as ox
 class Graph:
 
     def __init__(self):
+        self.geo=dg.Geo()
         self.source=0
         self.INF=1e16
         #Se crea la lista de nodos
@@ -17,13 +19,13 @@ class Graph:
         #Se crea un vector para guardar los caminos
         self.path=[]
         #Inicializacion de lista de nodos y id
-        self.list_nodes=dg.generate_nodes()
+        self.list_nodes=list(self.geo.generate_nodes())
         for i in range(len(self.list_nodes)):
             self.id[self.list_nodes[i]]=i
         #Creación de la lista de adyacencia en base al id
         self.adj=[[] for _ in self.id]
-        for a,b,c in dg.generate_edges():
-            self.adj[a].append((c,b))
+        for a,b,at in self.geo.generate_edges():
+            self.adj[self.id[a]].append((float(at["length"]),self.id[b]))
         #Inicialización de los vectores
         self.clean()
 
@@ -55,15 +57,25 @@ class Graph:
                     self.dist[adjnode]=current_distance+weight
                     heapq.heappush(priority_queue,(self.dist[adjnode],adjnode))
 
-    def change_source(self,s):
+    def set_source(self,s):
         self.clean()
         self.dijkstra(s)
 
+    def print_graph(self,config=None):
+        if config:
+            ox.plot_graph(self.geo.G,**config)
+        else:
+            ox.plot_graph(self.geo.G)
     
+        
+if __name__=='__main__':
+    grafica=Graph()
+    grafica.print_graph()
     
 
 
-            
+    
+
             
 
 

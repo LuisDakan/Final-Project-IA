@@ -17,17 +17,16 @@ class Geo:
 
         #Creación de un gdf con restaurantes
         self.restaurantes = ox.features_from_place(self.place, {'amenity': 'restaurant'})
-        print(ox.distance.nearest_nodes(self.G,X=-99.1850155,Y=19.3136655))
 
-        #Mapa para guardar el restaurante, se guardarán los ínidces en el gdf
+        #Mapa para guardar el restaurante, se guardarán los índices en el gdf
         self.general_rest={}
         for index,row in self.restaurantes.iterrows():
             geom=row["geometry"]
             if(geom.geom_type=='Point'):
-                rest_id=ox.distance.nearest_nodes(self.G,X=geom.x,Y=geom.Y)
+                rest_id=ox.distance.nearest_nodes(self.G,X=geom.x,Y=geom.y) #Funcion que obtiene el nodo más cercano
             else:
                 centro=geom.centroid
-                rest_id=ox.distance.nearest_nodes(self.G,X=centro.x,Y=centro.Y)
+                rest_id=ox.distance.nearest_nodes(self.G,X=centro.x,Y=centro.y)
             self.general_rest[rest_id]=index
         
         #Creación de gmaps para convertir lugares en coordenadas
@@ -38,9 +37,10 @@ class Geo:
         return self.G.nodes()
 
     def generate_edges(self):
-        return self.G.edges()
+        return self.G.edges(data=True)
 
     def get_Node(self,direction):
         result=self.gmaps.geocode(direction)
         ubi=result[0]['geometry']['location']
         return ox.distance.nearest_nodes(self.G,X=ubi["lng"],Y=ubi["lat"])
+    
