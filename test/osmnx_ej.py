@@ -1,4 +1,5 @@
 import osmnx as ox
+
 import matplotlib.pyplot as plt
 import os
 import googlemaps
@@ -6,10 +7,13 @@ import googlemaps
 
 def get_nodes(G):
     # Extraer y mostrar información de nodos
+    gmaps = googlemaps.Client(key=os.getenv("API_KEY_GOOGLE"))
     for nodo, atributos in G.nodes(data=True):
         print("Nodo:", nodo)
         print("Atributos:", atributos)
+        #print(gmaps.reverse_geocode((atributos["y"],atributos["x"]))[0]["formatted_address"])
         print("----------------")
+        
 
 def get_edges(G):
     
@@ -42,12 +46,13 @@ G = ox.graph_from_polygon(polygon, network_type='drive')
 target_node = list(G.nodes())[5]  # Ejemplo: elegimos el sexto nodo
 node_colors = ['red' if nodo == target_node else 'blue' for nodo in G.nodes()]
 
-#fig, ax = ox.plot_graph(G,node_color=node_colors)
+#get_edges(G)
 get_nodes(G)
 
+#fig, ax = ox.plot_graph(G,node_color=node_colors)
 #restaurantes = ox.features_from_place(place, tags)
-#print(restaurantes[['name','amenity']])
+#for index,row in restaurantes.iterrows():
+#    print(index,row)
 
 #El usuario debe meter su calle
-
 
