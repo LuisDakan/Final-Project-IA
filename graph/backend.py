@@ -25,9 +25,13 @@ class Graph:
         #Creación de la lista de adyacencia en base al id
         self.adj=[[] for _ in self.id]
         for a,b,at in self.geo.generate_edges():
-            self.adj[self.id[a]].append((float(at["length"]),self.id[b]))
+            self.adj[self.id[a]].append((self.id[b],float(at["length"])))
         #Inicialización de los vectores
         self.clean()
+        #Vector de colores de los nodos
+        self.color_nodes=[None for nodo in self.list_nodes]
+        #Vector de colores de las aristas
+        self.color_edges=[None for nodo in self.geo.generate_edges()]
 
     def clean(self):
         self.dist=[self.INF for _ in self.id]
@@ -57,19 +61,30 @@ class Graph:
                     self.dist[adjnode]=current_distance+weight
                     heapq.heappush(priority_queue,(self.dist[adjnode],adjnode))
 
-    def set_source(self,s):
+    def set_source(self,direction):
         self.clean()
-        self.dijkstra(s)
+        direction=f"{direction}, Coyoacán, Ciudad de México, México"
+        self.source=self.geo.get_Node(direction)
+        for i in range(len(self.list_nodes)):
+            if(self.list_nodes[i] in self.geo.general_rest):
+                self.color_nodes[i]='orange'
+            elif(self.list_nodes[i]==self.source):
+                self.color_nodes[i]='red'
+            else:
+                self.color_nodes[i]='blue'
+        self.dijkstra(self.source)
 
-    def print_graph(self,config=None):
-        if config:
-            ox.plot_graph(self.geo.G,**config)
-        else:
-            ox.plot_graph(self.geo.G)
+    def print_graph(self):
+        ox.plot_graph(self.geo.G,node_color=self.color_nodes,node_size=10)
+
+    def print_path(self):
+        ox.plot_graph(self.geo.G,node_color=self.color_nodes,edge_color=self.color_edges,node_size=10)
+
     
         
 if __name__=='__main__':
     grafica=Graph()
+    grafica.set_source("Gamma 32")
     grafica.print_graph()
     
 

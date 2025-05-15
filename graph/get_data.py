@@ -18,8 +18,10 @@ class Geo:
         #Creación de un gdf con restaurantes
         self.restaurantes = ox.features_from_place(self.place, {'amenity': 'restaurant'})
 
-        #Mapa para guardar el restaurante, se guardarán los índices en el gdf
+        #Mapa para guardar los restaurantes por cada nodo
         self.general_rest={}
+        #Mapa para guardar el nodo de cada restaurante
+        self.general_rest_index={}
         for index,row in self.restaurantes.iterrows():
             geom=row["geometry"]
             if(geom.geom_type=='Point'):
@@ -27,7 +29,10 @@ class Geo:
             else:
                 centro=geom.centroid
                 rest_id=ox.distance.nearest_nodes(self.G,X=centro.x,Y=centro.y)
-            self.general_rest[rest_id]=index
+            if rest_id not in self.general_rest:
+                self.general_rest[rest_id]=[]
+            self.general_rest_index[index]=rest_id
+            self.general_rest[rest_id].append(index)
         
         #Creación de gmaps para convertir lugares en coordenadas
 
