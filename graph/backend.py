@@ -25,7 +25,7 @@ class Graph:
         #Creación de la lista de adyacencia en base al id
         self.adj=[[] for _ in self.id]
         for a,b,at in self.geo.generate_edges():
-            self.adj[self.id[a]].append((self.id[b],float(at["length"])))
+            self.adj[self.id[a]].append((b,float(at["length"])))
         #Inicialización de los vectores
         self.clean()
         #Vector de colores de los nodos
@@ -51,15 +51,17 @@ class Graph:
         self.dist[self.id[s]]=0
         self.path[self.id[s]]=-1
         priority_queue=[]
-        heapq.heappush(priority_queue,(0,self.id[s]))
+        heapq.heappush(priority_queue,(0,s))
         while priority_queue:
             current_distance,current_node=heapq.heappop(priority_queue)
-            if current_distance>self.dist[current_node]:
+            id_cur=self.id[current_node]
+            if current_distance>self.dist[id_cur]:
                 continue
-            for adjnode,weight in self.adj[current_node]:
-                if(current_distance+weight<self.dist[adjnode]):
-                    self.dist[adjnode]=current_distance+weight
-                    heapq.heappush(priority_queue,(self.dist[adjnode],adjnode))
+            for adjnode,weight in self.adj[id_cur]:
+                id_adj=self.id[adjnode]
+                if(current_distance+weight<self.dist[id_adj]):
+                    self.dist[id_adj]=current_distance+weight
+                    heapq.heappush(priority_queue,(self.dist[id_adj],adjnode))
 
     def set_source(self,direction):
         self.clean()
