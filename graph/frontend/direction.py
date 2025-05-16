@@ -1,50 +1,65 @@
 import tkinter as tk
-from tkinter import messagebox
+from PIL import Image, ImageTk
 import start_session as ss
 import vista as v
-# La función submit_address se define dentro de main para capturar entry_address por cierre
+import os
 
+# Tamaño de la ventana
+VENTANA_ANCHO = 450
+VENTANA_ALTO = 600
+CARPETA_IMAGENES = "graphics"
 
 def main():
-    # Crear la ventana principal
     root = tk.Tk()
-    root.title("Ingresa tu Dirección")
-    root.geometry("350x180")
+    root.title("Gravo - Dirección")
+    root.geometry(f"{VENTANA_ANCHO}x{VENTANA_ALTO}")
+    root.resizable(False, False)
 
-    # Etiqueta para indicar al usuario
-    label = tk.Label(root, text="Ingresa tu dirección:", font=("Arial", 12))
-    label.pack(pady=10)
+    # ====== Fondo ======
+    ruta_fondo = os.path.join(CARPETA_IMAGENES, "direction.png")  # Usa tu imagen de fondo aquí
+    fondo_img = Image.open(ruta_fondo).resize((VENTANA_ANCHO, VENTANA_ALTO))
+    fondo_photo = ImageTk.PhotoImage(fondo_img)
 
-    # Campo de entrada para la dirección
-    entry_address = tk.Entry(root, width=40, font=("Arial", 12))
-    entry_address.pack(pady=5)
+    canvas = tk.Canvas(root, width=VENTANA_ANCHO, height=VENTANA_ALTO)
+    canvas.pack(fill="both", expand=True)
+    canvas.create_image(0, 0, image=fondo_photo, anchor="nw")
 
-    # Definir submit_address dentro de main para capturar entry_address
+    # ====== Campo para ingresar dirección ======
+    entry_address = tk.Entry(root, font=("Helvetica", 14), width=30, justify="center")
+    canvas.create_window(VENTANA_ANCHO // 2, VENTANA_ALTO // 2, window=entry_address)
+
+    # ====== Funciones ======
     def submit_address():
         address = entry_address.get()
         if address.strip() == "":
-            messagebox.showwarning("Advertencia", "Por favor, ingresa una dirección")
+            # Aquí podrías hacer una alerta más bonita si lo deseas
+            print("Por favor, ingresa una dirección.")
         else:
-            user_address = address
             root.destroy()
-            v.main(user_address)
-            
-
+            v.main(address)
 
     def exit_app():
         root.destroy()
         ss.main()
-    # Frame para los botones de acción
-    frame_buttons = tk.Frame(root)
-    frame_buttons.pack(pady=10)
 
-    # Botón para enviar la dirección
-    btn_submit = tk.Button(frame_buttons, text="Enviar", command=submit_address ,font=("Arial", 12, "bold"), bg="lightgreen", fg="black", bd=2, relief="raised")
-    btn_submit.pack(side=tk.LEFT, padx=10)
+    # ====== Botones ======
+    ruta_boton_enviar = os.path.join(CARPETA_IMAGENES, "search.png")     # Imagen para botón enviar
+    ruta_boton_salir = os.path.join(CARPETA_IMAGENES, "exit.png")      # Imagen para botón volver/salir
 
-    # Botón para salir de la aplicación
-    btn_exit = tk.Button(frame_buttons, text="Salir", command=exit_app, font=("Arial", 12, "bold"), bg="tomato", fg="black", bd=2, relief="raised")
-    btn_exit.pack(side=tk.LEFT, padx=10)
+    btn_send_img = ImageTk.PhotoImage(Image.open(ruta_boton_enviar).resize((180, 45)))
+    btn_exit_img = ImageTk.PhotoImage(Image.open(ruta_boton_salir).resize((300, 60)))
+
+    btn_send = tk.Button(root, image=btn_send_img, command=submit_address,
+                         borderwidth=0, bg="#ffffff", highlightthickness=0)
+    btn_exit = tk.Button(root, image=btn_exit_img, command=exit_app,
+                         borderwidth=0, bg="#ffffff", highlightthickness=0)
+
+    canvas.create_window(VENTANA_ANCHO // 2, VENTANA_ALTO - 250, window=btn_send)
+    canvas.create_window(VENTANA_ANCHO // 2, VENTANA_ALTO - 50, window=btn_exit)
+
+    # ====== Referencias para evitar que se liberen ======
+    root.fondo_photo = fondo_photo
+    root.btn_send_img = btn_send_img
+    root.btn_exit_img = btn_exit_img
 
     root.mainloop()
-
