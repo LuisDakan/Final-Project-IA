@@ -36,11 +36,16 @@ class Graph:
         self.color_nodes=[None for nodo in self.list_nodes]
         #Vector de colores de las aristas
         self.color_edges=[None for nodo in self.geo.generate_edges()]
+        #Vector para guardar los restaurantes en orden de proximidad
+        self.nearest_rest=[]
 
     def clean(self):
         self.dist=[self.INF for _ in self.id]
         self.path=[0 for _ in self.id]
         self.path_edge=[0 for _ in self.id]
+        self.nearest_rest=[]
+        self.color_nodes=["white" for _ in self.list_nodes]
+
 
     def query_distance(self,direction):
         node=self.geo.get_Node(direction=direction)
@@ -78,14 +83,12 @@ class Graph:
         self.clean()
         direction=f"{direction}, Coyoacán, Ciudad de México, México"
         self.source=self.geo.get_Node(direction)
-        for i in range(len(self.list_nodes)):
-            if(self.list_nodes[i]==self.source):
-                self.color_nodes[i]='red'
-            elif(self.list_nodes[i] in self.geo.general_rest):
-                self.color_nodes[i]='orange'
-            else:
-                self.color_nodes[i]='blue'
+        for index,rest_id in self.geo.general_rest_index.items():
+            self.color_nodes[self.id[rest_id]]="orange" 
+        self.color_nodes[self.id[self.source]]="red"
         self.dijkstra(self.source)
+        rest=[(self.dist[self.id[node]],rest) for rest,node in self.geo.general_rest_index.items()]
+        self.nearest_rest=sorted(rest,key=lambda x:x[0])
 
     def print_graph(self):
         ox.plot_graph(self.geo.G,node_color=self.color_nodes,node_size=10)
@@ -101,14 +104,25 @@ class Graph:
                 self.color_edges[i]='white'
         ox.plot_graph(self.geo.G,node_color=self.color_nodes,edge_color=self.color_edges,node_size=10)
 
+    def query_near_rest(self,quantity):
+        return self.nearest_rest[0:quantity]
+    #Nombre es name
     
+    def print_nearest(self,quantity):
+        for distance,rest in self.query_near_rest(quantity=quantity):
+            self.color_nodes[self.id[self.geo.general_rest_index[rest]]]="green"
+        self.color_nodes[self.id[self.source]]="red"
+        self.print_graph()
+        
+      
         
 if __name__=='__main__':
     grafica=Graph()
     grafica.set_source("Clavel 68")
+    grafica.print_nearest(5)
     #grafica.set_source("Museo 150,San Pablo Tepetlapa")
     #grafica.print_graph()
-    grafica.print_path("Museo 150,San Pablo Tepetlapa")
+    #grafica.print_path("Museo 150,San Pablo Tepetlapa")
 
 
     
