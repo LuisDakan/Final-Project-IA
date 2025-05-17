@@ -47,12 +47,10 @@ class Graph:
         self.color_nodes=["white" for _ in self.list_nodes]
 
 
-    def query_distance(self,direction):
-        node=self.geo.get_Node(direction=direction)
+    def query_distance(self,node):
         return self.dist[self.id[node]]
 
-    def query_path(self,direction):
-        node=self.geo.get_Node(direction=direction)
+    def query_path(self,node):
         stack_node=[]
         stack_edge=[]
         while self.path[self.id[node]]!=-1:
@@ -94,7 +92,7 @@ class Graph:
         ox.plot_graph(self.geo.G,node_color=self.color_nodes,node_size=10)
 
     def print_path(self,destiny):
-        path_node,path_edge=self.query_path(destiny)
+        path_node,path_edge=self.query_path(self.geo.get_Node(destiny))
         for node in path_node:
             self.color_nodes[self.id[node]]='red'
         for i, (u, v, k) in enumerate(self.geo.G.edges(keys=True)):
