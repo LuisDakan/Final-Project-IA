@@ -28,7 +28,8 @@ class Graph:
         #Creación de la lista de adyacencia en base al id
         self.adj=[[] for _ in self.id]
         for a,b,at in self.geo.generate_edges():
-            self.adj[self.id[a]].append((b,float(at["length"])))
+            #self.adj[self.id[a]].append((b,float(at["length"])))
+            self.adj[self.id[b]].append((a,float(at["length"])))
             
         #Inicialización de los vectores
         self.clean()
