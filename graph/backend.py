@@ -83,7 +83,7 @@ class Graph:
         self.source=self.geo.get_Node(direction)
         for index,rest_id in self.geo.general_rest_index.items():
             self.color_nodes[self.id[rest_id]]="orange" 
-        self.color_nodes[self.id[self.source]]="red"
+        self.color_nodes[self.id[self.source]]="purple"
         self.dijkstra(self.source)
         rest=[(self.dist[self.id[node]],rest) for rest,node in self.geo.general_rest_index.items()]
         self.nearest_rest=sorted(rest,key=lambda x:x[0])
@@ -91,8 +91,10 @@ class Graph:
     def print_graph(self):
         ox.plot_graph(self.geo.G,node_color=self.color_nodes,node_size=10)
 
-    def print_path(self,destiny):
-        path_node,path_edge=self.query_path(self.geo.get_Node(destiny))
+    def print_path(self,nodo):
+        path_node,path_edge=self.query_path(nodo)
+        for i in range(self.list_nodes):
+            self.color_nodes='white'
         for node in path_node:
             self.color_nodes[self.id[node]]='red'
         for i, (u, v, k) in enumerate(self.geo.G.edges(keys=True)):
@@ -109,14 +111,14 @@ class Graph:
     def print_nearest(self,quantity):
         for distance,rest in self.query_near_rest(quantity=quantity):
             self.color_nodes[self.id[self.geo.general_rest_index[rest]]]="green"
-        self.color_nodes[self.id[self.source]]="red"
+        self.color_nodes[self.id[self.source]]="purple"
         self.print_graph()
         
       
         
 if __name__=='__main__':
     grafica=Graph()
-    grafica.set_source("Clavel 68")
+    grafica.set_source("Gamma 32")
     grafica.print_nearest(5)
     #grafica.set_source("Museo 150,San Pablo Tepetlapa")
     #grafica.print_graph()

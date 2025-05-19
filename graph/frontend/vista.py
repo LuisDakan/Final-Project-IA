@@ -3,6 +3,17 @@ from PIL import Image, ImageTk
 import direction as d
 import os
 import random
+import sys
+import osmnx as om
+import googlemaps
+import math
+sys.path.append(os.path.dirname(os.getcwd()))
+
+
+import backend as bk
+
+
+graf=bk.Graph()
 
 VENTANA_ANCHO = 450
 VENTANA_ALTO = 600
@@ -12,7 +23,7 @@ CARPETA_COMIDA = os.path.join(CARPETA_IMAGENES, "food")  # Carpeta con imágenes
 # ==== Cargar imágenes automáticamente desde la carpeta food/ ====
 IMAGENES_RESTAURANTES = [f for f in os.listdir(CARPETA_COMIDA) if f.lower().endswith(".jpg")]
 
-def abrir_ventana_detalle(nombre_restaurante):
+def abrir_ventana_detalle(nombre_restaurante,index):
     detalle = tk.Toplevel()
     detalle.title(f"Detalles de {nombre_restaurante}")
     detalle.geometry("400x500")
@@ -31,6 +42,8 @@ def abrir_ventana_detalle(nombre_restaurante):
     imagen_aleatoria = random.choice(IMAGENES_RESTAURANTES)
     ruta_imagen = os.path.join(CARPETA_COMIDA, imagen_aleatoria)
 
+
+
     img_rest = Image.open(ruta_imagen).resize((170, 230))  # ancho = 170, alto = 230
     rest_photo = ImageTk.PhotoImage(img_rest)
 
@@ -43,7 +56,10 @@ def abrir_ventana_detalle(nombre_restaurante):
     def confirmar_seleccion():
         print(f"Your order was placed: {nombre_restaurante}")
         detalle.destroy()
-        detalle.master.destroy()
+        #detalle.master.destroy()
+        graf.print_path(graf.geo.general_rest_index[index])
+        
+
 
     # ==== Botones con imágenes ====
     confirmar_img = ImageTk.PhotoImage(Image.open(os.path.join(CARPETA_IMAGENES, "order.png")).resize((60, 60)))
@@ -65,6 +81,9 @@ def abrir_ventana_detalle(nombre_restaurante):
 
 
 def main(user_direction):
+
+    global graf
+    graf.set_source(user_direction)
     root = tk.Tk()
     root.title("Nearby Restaurants")
     root.geometry(f"{VENTANA_ANCHO}x{VENTANA_ALTO}")
@@ -81,16 +100,17 @@ def main(user_direction):
 
     # ==== Mostrar botones de restaurantes ====
     def mostrar_resultados():
-        resultados = [
-            "Restaurante A - 0.5 km",
-            "Cafetería B - 0.8 km",
-            "Tienda C - 1.0 km",
-        ]
+        tot=4
+        resultados=[]
+        index=[]
+        for distance,rest in graf.query_near_rest(tot):
+            resultados.append(f"Restaurante {graf.geo.get_info_rest(rest)}- {distance/1000:.5f} km")
+            index.append(rest)
         y_inicial = 150
         for i, nombre in enumerate(resultados):
             btn = tk.Button(root, text=nombre, font=("Helvetica", 12, "bold"),
                             bg="#ffffff", fg="#000000", width=30, height=2, relief="raised",
-                            command=lambda n=nombre: abrir_ventana_detalle(n))
+                            command=lambda n=nombre,idx=i: abrir_ventana_detalle(n,index[idx]))
             canvas.create_window(VENTANA_ANCHO // 2, y_inicial + i * 80, window=btn)
 
     # ==== Botón salir ====

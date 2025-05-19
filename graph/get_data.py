@@ -43,5 +43,5 @@ class Geo:
         return ox.distance.nearest_nodes(self.G,X=ubi["lng"],Y=ubi["lat"])
     
     def get_info_rest(self,index):
-        return self.restaurantes.iloc[index]
+        return self.restaurantes.loc[index]["name"]
     

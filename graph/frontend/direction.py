@@ -3,7 +3,8 @@ from PIL import Image, ImageTk
 import start_session as ss
 import vista as v
 import os
-
+import googlemaps 
+import osmnx as ox
 # Tamaño de la ventana
 VENTANA_ANCHO = 450
 VENTANA_ALTO = 600
