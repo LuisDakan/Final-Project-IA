@@ -58,7 +58,7 @@ def abrir_ventana_detalle(nombre_restaurante,index):
         detalle.destroy()
         #detalle.master.destroy()
         graf.print_path(graf.geo.general_rest_index[index])
-        
+
 
 
     # ==== Botones con imágenes ====
@@ -104,7 +104,7 @@ def main(user_direction):
         resultados=[]
         index=[]
         for distance,rest in graf.query_near_rest(tot):
-            resultados.append(f"Restaurante {graf.geo.get_info_rest(rest)}- {distance/1000:.5f} km")
+            resultados.append(f"Rest. {graf.geo.get_info_rest(rest)}- {distance/1000:.5f} km")
             index.append(rest)
         y_inicial = 150
         for i, nombre in enumerate(resultados):
