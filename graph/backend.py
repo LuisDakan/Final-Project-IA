@@ -93,8 +93,10 @@ class Graph:
 
     def print_path(self,nodo):
         path_node,path_edge=self.query_path(nodo)
-        for i in range(self.list_nodes):
-            self.color_nodes='white'
+        for i in range(len(self.list_nodes)):
+            self.color_nodes[i]='white'
+        for index,rest_id in self.geo.general_rest_index.items():
+            self.color_nodes[self.id[rest_id]]="orange" 
         for node in path_node:
             self.color_nodes[self.id[node]]='red'
         for i, (u, v, k) in enumerate(self.geo.G.edges(keys=True)):
@@ -102,6 +104,7 @@ class Graph:
                 self.color_edges[i] = 'red'
             else:
                 self.color_edges[i]='white'
+        self.color_nodes[self.id[self.source]]="purple"
         ox.plot_graph(self.geo.G,node_color=self.color_nodes,edge_color=self.color_edges,node_size=10)
 
     def query_near_rest(self,quantity):
@@ -114,15 +117,8 @@ class Graph:
         self.color_nodes[self.id[self.source]]="purple"
         self.print_graph()
         
-      
-        
-if __name__=='__main__':
-    grafica=Graph()
-    grafica.set_source("Gamma 32")
-    grafica.print_nearest(5)
-    #grafica.set_source("Museo 150,San Pablo Tepetlapa")
-    #grafica.print_graph()
-    #grafica.print_path("Museo 150,San Pablo Tepetlapa")
+
+    
 
 
     
